@@ -26,6 +26,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import org.jboss.logging.Logger;
 import org.jboss.seam.cron.annotations.Asynchronous;
+import org.jboss.seam.cron.async.context.InvocationContextReplicationUtils;
 
 /**
  * Interceptor for asynchronous methods. Method may be directly marked as
@@ -51,7 +52,7 @@ public class AsynchronousInterceptor {
         log.trace("Intercepting method invocation of " + ctx.getMethod().getName() + " to make it @Asynchronous");
 
         final InvocationCallable icr = icrs.get();
-        icr.setInvocationContext(ctx);
+        icr.setInvocationContext(InvocationContextReplicationUtils.replicate(ctx));
 
         if (Future.class.isAssignableFrom(ctx.getMethod().getReturnType())) {
             // swap the "dummy" Future for a truly asynchronous future to return to the caller immediately
